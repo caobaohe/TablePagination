@@ -33,8 +33,14 @@
     <div class="pagination">
       <el-pagination
         background
-        layout="prev, pager, next"
-        :total="total" :page-size="pageSize" @current-change="currentChange" @size-change="sizeChange">
+        layout="jumper, prev, pager, next, sizes, total"
+        :total="total"
+        :current-page.sync="currentPage"
+        :page-size="pageSize"
+        :page-sizes="[10, 20, 100, 200]"
+        @current-change="currentChange"
+        @size-change="sizeChange"
+      >
       </el-pagination>
     </div>
   </div>
@@ -58,7 +64,9 @@
         self.loadTable()
       },
       sizeChange (size) {
-
+        var self = this
+        self.pageSize = size
+        self.loadTable()
       },
       loadTable () {
         var self = this
