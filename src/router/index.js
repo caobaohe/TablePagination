@@ -3,11 +3,13 @@ import Router from 'vue-router'
 // element-ui
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
+import '../assets/icon/iconfont.css'
 // ajax
 import Axios from 'axios'
 // 时间处理
 import moment from 'moment'
-import HelloWorld from '@/components/HelloWorld'
+// import HelloWorld from '@/components/HelloWorld'
+import Main from '@/components/Main'
 import User from '@/components/User'
 
 Vue.use(Router)
@@ -33,8 +35,8 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'HelloWorld',
-      component: HelloWorld
+      name: 'Main',
+      component: Main
     },
     {
       path: '/user',
