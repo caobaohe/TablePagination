@@ -11,7 +11,7 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
-      // 此时以/user/*的请求，都会走http://localhost:8088
+      // 此时以/user/*的请求，都会走http://localhost:80
       '/user': {
         target: 'http://localhost:80',
         changeOrigin: true,

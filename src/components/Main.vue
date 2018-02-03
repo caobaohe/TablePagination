@@ -22,56 +22,29 @@
       </div>
     </el-header>
     <el-container>
+      <!--
       <el-aside class="aside" v-bind:style="{width:mainLeft + 'px'}">
         <div class="aside-top" @click="toggleAside(isCollapsed)">
           <span class="el-icon-ali-category"></span>
         </div>
         <div class="menu">
-          <el-menu class="el-menu-vertical-demo" :default-openeds="[]" @open="handleOpen" @close="handleClose"
-                   :collapse="isCollapsed" background-color="#42485B" text-color="#ffffff" router="true">
-            <el-submenu index="1">
-              <template slot="title"><i class="el-icon-message"></i><span slot="title">导航一</span></template>
-              <el-menu-item-group>
-                <el-menu-item index="user">用户</el-menu-item>
-                <el-menu-item index="1-3">选项3</el-menu-item>
-              </el-menu-item-group>
-            </el-submenu>
-            <el-submenu index="2">
-              <template slot="title"><i class="el-icon-menu"></i><span slot="title">导航二</span></template>
-              <el-menu-item-group>
-                <template slot="title">分组一</template>
-                <el-menu-item index="2-1">选项1</el-menu-item>
-                <el-menu-item index="2-2">选项2</el-menu-item>
-              </el-menu-item-group>
-              <el-menu-item-group title="分组2">
-                <el-menu-item index="2-3">选项3</el-menu-item>
-              </el-menu-item-group>
-              <el-submenu index="2-4">
-                <template slot="title">选项4</template>
-                <el-menu-item index="2-4-1">选项4-1</el-menu-item>
-              </el-submenu>
-            </el-submenu>
-            <el-submenu index="3">
-              <template slot="title"><i class="el-icon-setting"></i><span slot="title">导航三</span></template>
-              <el-menu-item-group>
-                <template slot="title">分组一</template>
-                <el-menu-item index="3-1">选项1</el-menu-item>
-                <el-menu-item index="3-2">选项2</el-menu-item>
-              </el-menu-item-group>
-              <el-menu-item-group title="分组2">
-                <el-menu-item index="3-3">选项3</el-menu-item>
-              </el-menu-item-group>
-              <el-submenu index="3-4">
-                <template slot="title">选项4</template>
-                <el-menu-item index="3-4-1">选项4-1</el-menu-item>
-              </el-submenu>
-            </el-submenu>
+          <el-menu class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose"
+                   :collapse="isCollapsed" background-color="#42485B" text-color="#ffffff" :default-active="$route.path"
+                   router>
+            <el-menu-item-group>
+              <el-menu-item v-for="menu in menus" :index="menu.route"
+                            :key="menu.route"><i class="el-icon-menu"></i>{{menu.name}}
+              </el-menu-item>
+            </el-menu-item-group>
           </el-menu>
         </div>
-
       </el-aside>
+      -->
       <el-main class="main" v-bind:style="{left: mainLeft + 'px'}">
-        <User></User>
+        <el-tabs v-model="activeTab" @tab-click="handleTabClick" type="card" closable @edit="handleTabsEdit">
+          <el-tab-pane :key="tab.name" v-for="(tab,index) in options" :label="tab.title" :name="tab.name">{{tab.content}}
+          </el-tab-pane>
+        </el-tabs>
       </el-main>
     </el-container>
 
@@ -83,10 +56,45 @@
 
   export default {
     name: 'Main',
+    components: {
+      User
+    },
     data () {
       return {
-        isCollapsed: true,
-        mainLeft: 64
+        menus: [
+          {route: '/', name: '首页'},
+          {route: '/user', name: '用户管理'},
+          {route: '/psd', name: '密码管理'},
+          {route: '/salary', name: '工资管理'},
+          {route: '/attendence', name: '考勤管理'},
+          {route: '/perform', name: '绩效管理'},
+          {route: '/admin', name: '系统管理'},
+          {route: '/feedback', name: '意见反馈'}
+        ],
+        isCollapsed: false, // true收缩false展开
+        mainLeft: 200, // 64
+        // tab
+        tabs: [{
+          title: 'Tab 1',
+          name: '1',
+          content: 'Tab 1 content'
+        }, {
+          title: 'Tab 2',
+          name: '2',
+          content: 'Tab 2 content'
+        }],
+        activeTab: '2',
+        editableTabsValue: '2',
+        editableTabs: [{
+          title: 'Tab 1',
+          name: '1',
+          content: 'Tab 1 content'
+        }, {
+          title: 'Tab 2',
+          name: '2',
+          content: 'Tab 2 content'
+        }],
+        tabIndex: 2
       }
     },
     methods: {
@@ -105,10 +113,82 @@
       },
       handleClose (key, keyPath) {
         console.log(key, keyPath)
+      },
+      handleTabClick (tab, event) {
+        console.log(tab, event)
+      },
+      handleTabsEdit (targetName, action) {
+        console.log(targetName, action)
+        if (action === 'add') {
+          let newTabName = ++this.tabIndex + ''
+          this.tabs.push({
+            title: 'New Tab',
+            name: newTabName,
+            content: 'New Tab content'
+          })
+          this.activeTab = newTabName
+        }
+        if (action === 'remove') {
+          let tabs = this.tabs
+          let activeName = this.activeTab
+          if (activeName === targetName) {
+            tabs.forEach((tab, index) => {
+              if (tab.name === targetName) {
+                let nextTab = tabs[index + 1] || tabs[index - 1]
+                if (nextTab) {
+                  activeName = nextTab.name
+                }
+              }
+            })
+          }
+
+          this.activeTab = activeName
+          this.tabs = tabs.filter(tab => tab.name !== targetName)
+        }
       }
     },
-    components: {
-      User
+    computed: {
+      options () {
+        return this.$store.state.options
+      },
+      activeIndex: {
+        get () {
+          return this.$store.state.activeIndex
+        },
+        set (val) {
+          this.$store.commit('set_active_index', val)
+        }
+      }
+    },
+    watch: {
+      '$route' (to) {
+        let flag = false
+        for (let option of this.options) {
+          if (option.name === to.name) {
+            flag = true
+            this.$store.commit('set_active_index', '/' + to.path.split('/')[1])
+            break
+          }
+        }
+        if (!flag) {
+          this.$store.commit('add_tabs', {route: '/' + to.path.split('/')[1], name: to.name})
+          this.$store.commit('set_active_index', '/' + to.path.split('/')[1])
+        }
+      }
+    },
+    mounted () {
+      // 刷新时以当前路由做为tab加入tabs
+      /*
+      if (this.$route.path !== '/' && this.$route.path.indexOf('userInfo') === -1) {
+        this.$store.commit('add_tabs', {route: '/', name: '首页'})
+        this.$store.commit('add_tabs', {route: this.$route.path, name: this.$route.name})
+        this.$store.commit('set_active_index', this.$route.path)
+      } else {
+        this.$store.commit('add_tabs', {route: '/', name: '首页'})
+        this.$store.commit('set_active_index', '/')
+        this.$router.push('/')
+      }
+      */
     }
   }
 </script>
@@ -202,8 +282,8 @@
   }
 
   .main {
-    padding: 0;
-    background: #eee;
+    padding: 5px 10px 10px 10px;
+    background: #fff;
   }
 
   .footer {

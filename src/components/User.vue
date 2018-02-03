@@ -1,8 +1,8 @@
 <template>
-  <div style="height: 200px;">
+  <div><!--style="height: 200px;"-->
     <el-table
       :data="users"
-      stripe border height="620"
+      stripe border height="500"
       style="width: 100%;">
       <el-table-column
         type="index"
@@ -43,6 +43,35 @@
       >
       </el-pagination>
     </div>
+    <div class="dialog">
+      <!--dialog-->
+      <el-dialog
+        title="用户信息"
+        :visible.sync="dialogVisible"
+        :before-close="handleClose">
+        <el-form :model="form">
+          <el-form-item label="姓名" :label-width="formLabelWidth">
+            <el-input v-model="form.name" auto-complete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="性别" :label-width="formLabelWidth">
+            <el-select v-model="form.region" placeholder="请选择">
+              <el-option label="男" value="0"></el-option>
+              <el-option label="女" value="1"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="手机号" :label-width="formLabelWidth">
+            <el-input></el-input>
+          </el-form-item>
+          <el-form-item label="邮箱" :label-width="formLabelWidth">
+            <el-input></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="dialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+        </div>
+      </el-dialog>
+    </div>
   </div>
 </template>
 
@@ -51,9 +80,10 @@
     name: 'User',
     methods: {
       showHandle (row) {
+        this.dialogVisible = true
       },
       editHandle (row) {
-        alert(row)
+        this.dialogVisible = true
       },
       dateFormatter (row, column, cellValue) {
         return this.$moment(cellValue).format('YYYY-MM-DD HH:mm:ss')
@@ -86,6 +116,10 @@
         }).catch(function (err) {
           console.log(err)
         })
+      },
+      handleClose () {
+        console.log('handleClose')
+        this.dialogVisible = false
       }
     },
     data () {
@@ -96,7 +130,15 @@
         currentPage: 1,
         // 分页大小
         pageSize: 10,
-        users: []
+        users: [],
+        // dialog
+        dialogVisible: false,
+        // form
+        form: {
+          name: '',
+          region: ''
+        },
+        formLabelWidth: '80px'
       }
     },
     created: function () {
@@ -112,5 +154,6 @@
 <style>
   .pagination {
     text-align: center;
+    margin-top: 10px;
   }
 </style>
