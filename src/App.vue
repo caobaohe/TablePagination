@@ -36,8 +36,8 @@
             <el-tab-pane :key="tab.name" v-for="(tab,index) in options" :label="tab.name" :name="tab.route">
               <!--{{tab.name}}-->
               <!--<b>{{$route.name}}</b>-->
-              <router-view/>
             </el-tab-pane>
+            <router-view/>
           </el-tabs>
         </el-main>
       </el-container>
@@ -93,7 +93,7 @@
     },
     computed: {
       options () {
-        debugger
+        // debugger
         console.log(this.$store.state.options)
         return this.$store.state.options
       },
@@ -248,12 +248,14 @@
 
   .main {
     /*padding: 5px 10px 10px 10px;*/
-    padding: 0px;
+    padding: 2px;
     background: #fff;
+    min-height: 100%;
   }
 
   .main .tabs{
-    min-height: 100%;
+    min-height: calc(100% - 2px);
+    /*height: calc(100% - 2px);*/
     /*border: 1px solid #000;*/
   }
 
